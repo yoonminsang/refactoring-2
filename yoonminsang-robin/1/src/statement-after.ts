@@ -1,4 +1,10 @@
-import { Performance, Invoice, Plays } from './types';
+import {
+  Performance,
+  Invoice,
+  Plays,
+  EnrichPerformance,
+  StatementData,
+} from './types';
 
 // 1.1~1.5
 /*
@@ -29,16 +35,19 @@ import { Performance, Invoice, Plays } from './types';
 */
 
 export function statement(invoice: Invoice, plays: Plays) {
-  const statementData: any = {};
-  statementData.customer = invoice.customer;
-  statementData.performances = invoice.performances.map(enrichPerformance);
+  const statementData: StatementData = {
+    customer: invoice.customer,
+    performances: invoice.performances.map(enrichPerformance),
+  };
   return renderPlainText(statementData, plays);
 
-  function enrichPerformance(aPerformance: Performance) {
-    const result: any = Object.assign({}, aPerformance);
-    result.play = playFor(result);
-    result.amount = amountFor(result);
-    result.volumeCredits = volumeCreditsFor(result);
+  function enrichPerformance(aPerformance: Performance): EnrichPerformance {
+    const result: EnrichPerformance = {
+      ...aPerformance,
+      play: playFor(aPerformance),
+      amount: amountFor(aPerformance),
+      volumeCredits: volumeCreditsFor(aPerformance),
+    };
     return result;
   }
 
