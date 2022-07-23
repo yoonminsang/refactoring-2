@@ -1,5 +1,6 @@
 import { Performance, Invoice, Plays } from './types';
 
+// 1.1~1.5
 /*
 변경점
 1. amountFor이라는 함수 추출
@@ -11,6 +12,14 @@ import { Performance, Invoice, Plays } from './types';
 7. 임시 변수에 함수를 대입한 형태인 format을 변경(만만해서)
 8. volumeCredits 리팩터링(반복문 쪼개기, 문장 슬라이스하기(변수 초기화 위치 밑으로 이동), 함수 추출하기, 변수 인라인하기)
 9. totalAmount 리팩터링(8과 동일)
+*/
+
+/*
+의문점
+타입스크립트에서도 부정관사를 붙여야할까?
+지역변수를 제거하기 위해서 
+중첩함수가 좋은 방법일까?
+지역변수를 줄이기위해 함수를 사용하는데 이게 항상 옳은 방법일까?
 */
 
 export function statement(invoice: Invoice, plays: Plays) {
