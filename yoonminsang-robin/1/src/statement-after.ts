@@ -17,9 +17,9 @@ import { Performance, Invoice, Plays } from './types';
 /*
 의문점
 타입스크립트에서도 부정관사를 붙여야할까?
-지역변수를 제거하기 위해서 
 중첩함수가 좋은 방법일까?
 지역변수를 줄이기위해 함수를 사용하는데 이게 항상 옳은 방법일까?
+함수에 객체 전체를 전달하는게 좋을까 필요한 데이터만 전달하는게 좋을까?
 */
 
 // 1.6~1.10
@@ -29,9 +29,10 @@ import { Performance, Invoice, Plays } from './types';
 */
 
 export function statement(invoice: Invoice, plays: Plays) {
-  return renderPlainText(invoice, plays);
+  const statementData = {};
+  return renderPlainText(statementData, invoice, plays);
 }
-function renderPlainText(invoice: Invoice, plays: Plays) {
+function renderPlainText(data: any, invoice: Invoice, plays: Plays) {
   let result = `청구내역 (고객명: ${invoice.customer})\n`;
   for (let perf of invoice.performances) {
     result += `${playFor(perf).name} : ${usd(amountFor(perf) / 100)} (${
