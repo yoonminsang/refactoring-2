@@ -35,13 +35,16 @@ import {
 */
 
 export function statement(invoice: Invoice, plays: Plays) {
+  const performances = invoice.performances.map(enrichPerformance);
   const statementData: StatementData = {
     customer: invoice.customer,
-    performances: invoice.performances.map(enrichPerformance),
+    performances,
+    totalAmount: totalAmount(performances),
+    totalVolumeCredits: totalVolumeCredits(performances),
   };
-  return renderPlainText(statementData, plays);
+  return renderPlainText(statementData);
 
-  function enrichPerformance(aPerformance: Performance): EnrichPerformance {
+  function enrichPerformance(aPerformance: Performance) {
     const result: EnrichPerformance = {
       ...aPerformance,
       play: playFor(aPerformance),
@@ -86,39 +89,39 @@ export function statement(invoice: Invoice, plays: Plays) {
     return result;
   }
 
-  function renderPlainText(data: any, plays: Plays) {
+  function totalAmount(performances: EnrichPerformance[]) {
+    let result = 0;
+    for (let perf of performances) {
+      result += amountFor(perf);
+    }
+    return result;
+  }
+
+  function totalVolumeCredits(performances: EnrichPerformance[]) {
+    let result = 0;
+    for (let perf of performances) {
+      result += perf.volumeCredits;
+    }
+    return result;
+  }
+
+  function renderPlainText(data: StatementData) {
     let result = `청구내역 (고객명: ${data.customer})\n`;
     for (let perf of data.performances) {
       result += `${perf.play.name} : ${usd(perf.amount / 100)} (${
         perf.audience
       }석)\n`;
     }
-    result += `총액: ${usd(totalAmount() / 100)}\n`;
-    result += `적립 포인트: ${totalVolumeCredits()}점\n`;
+    result += `총액: ${usd(data.totalAmount / 100)}\n`;
+    result += `적립 포인트: ${data.totalVolumeCredits}점\n`;
     return result;
-
-    function usd(aNumber: number) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 2,
-      }).format(aNumber);
-    }
-
-    function totalAmount() {
-      let result = 0;
-      for (let perf of data.performances) {
-        result += amountFor(perf);
-      }
-      return result;
-    }
-
-    function totalVolumeCredits() {
-      let result = 0;
-      for (let perf of data.performances) {
-        result += perf.volumeCredits;
-      }
-      return result;
-    }
   }
+}
+
+function usd(aNumber: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format(aNumber);
 }
