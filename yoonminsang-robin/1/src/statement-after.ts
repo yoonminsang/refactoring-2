@@ -90,19 +90,11 @@ export function statement(invoice: Invoice, plays: Plays) {
   }
 
   function totalAmount(performances: EnrichPerformance[]) {
-    let result = 0;
-    for (let perf of performances) {
-      result += amountFor(perf);
-    }
-    return result;
+    return performances.reduce((acc, cur) => acc + cur.amount, 0);
   }
 
   function totalVolumeCredits(performances: EnrichPerformance[]) {
-    let result = 0;
-    for (let perf of performances) {
-      result += perf.volumeCredits;
-    }
-    return result;
+    return performances.reduce((acc, cur) => acc + cur.volumeCredits, 0);
   }
 
   function renderPlainText(data: StatementData) {
