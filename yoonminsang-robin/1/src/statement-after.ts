@@ -48,6 +48,9 @@ data, ui 분리. + 중간 구조체 생성
     - 지역변수로 접근하면 지역변수를 생성한다는 문제가 있고 함수를 이용해 접근한다면 가독성이나 유지보수 측면에서 단점이 있다.
 */
 
+/**
+ * @deprecated
+ */
 export function statement(invoice: Invoice, plays: Plays) {
   const performances = invoice.performances.map(enrichPerformance);
   const statementData: StatementData = {
@@ -115,11 +118,9 @@ export function statement(invoice: Invoice, plays: Plays) {
 function renderPlainText(data: StatementData) {
   let result = `청구내역 (고객명: ${data.customer})\n`;
   for (let perf of data.performances) {
-    result += `${perf.play.name} : ${usd(perf.amount / 100)} (${
-      perf.audience
-    }석)\n`;
+    result += `${perf.play.name} : ${usd(perf.amount)} (${perf.audience}석)\n`;
   }
-  result += `총액: ${usd(data.totalAmount / 100)}\n`;
+  result += `총액: ${usd(data.totalAmount)}\n`;
   result += `적립 포인트: ${data.totalVolumeCredits}점\n`;
   return result;
 }
@@ -129,5 +130,5 @@ function usd(aNumber: number) {
     style: 'currency',
     currency: 'USD',
     minimumFractionDigits: 2,
-  }).format(aNumber);
+  }).format(aNumber / 100);
 }
