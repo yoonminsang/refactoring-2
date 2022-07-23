@@ -96,18 +96,18 @@ export function statement(invoice: Invoice, plays: Plays) {
   function totalVolumeCredits(performances: EnrichPerformance[]) {
     return performances.reduce((acc, cur) => acc + cur.volumeCredits, 0);
   }
+}
 
-  function renderPlainText(data: StatementData) {
-    let result = `청구내역 (고객명: ${data.customer})\n`;
-    for (let perf of data.performances) {
-      result += `${perf.play.name} : ${usd(perf.amount / 100)} (${
-        perf.audience
-      }석)\n`;
-    }
-    result += `총액: ${usd(data.totalAmount / 100)}\n`;
-    result += `적립 포인트: ${data.totalVolumeCredits}점\n`;
-    return result;
+function renderPlainText(data: StatementData) {
+  let result = `청구내역 (고객명: ${data.customer})\n`;
+  for (let perf of data.performances) {
+    result += `${perf.play.name} : ${usd(perf.amount / 100)} (${
+      perf.audience
+    }석)\n`;
   }
+  result += `총액: ${usd(data.totalAmount / 100)}\n`;
+  result += `적립 포인트: ${data.totalVolumeCredits}점\n`;
+  return result;
 }
 
 function usd(aNumber: number) {
