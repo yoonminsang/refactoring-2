@@ -37,6 +37,7 @@ export function statement(invoice: Invoice, plays: Plays) {
   function enrichPerformance(aPerformance: Performance) {
     const result: any = Object.assign({}, aPerformance);
     result.play = playFor(result);
+    result.amount = amountFor(result);
     return result;
   }
 
@@ -44,10 +45,32 @@ export function statement(invoice: Invoice, plays: Plays) {
     return plays[aPerformance.playID];
   }
 
+  function amountFor(aPerformance: Performance) {
+    let result = 0;
+    switch (playFor(aPerformance).type) {
+      case 'tragedy': // 비극
+        result = 40000;
+        if (aPerformance.audience > 30) {
+          result += 1000 * (aPerformance.audience - 30);
+        }
+        break;
+      case 'comedy': // 희극
+        result = 30000;
+        if (aPerformance.audience > 20) {
+          result += 10000 + 500 * (aPerformance.audience - 20);
+        }
+        result += 300 * aPerformance.audience;
+        break;
+      default:
+        throw new Error(`알 수 없는 장르 : ${playFor(aPerformance).type}`);
+    }
+    return result;
+  }
+
   function renderPlainText(data: any, plays: Plays) {
     let result = `청구내역 (고객명: ${data.customer})\n`;
     for (let perf of data.performances) {
-      result += `${playFor(perf).name} : ${usd(amountFor(perf) / 100)} (${
+      result += `${perf.play.name} : ${usd(perf.amount / 100)} (${
         perf.audience
       }석)\n`;
     }
@@ -61,28 +84,6 @@ export function statement(invoice: Invoice, plays: Plays) {
         currency: 'USD',
         minimumFractionDigits: 2,
       }).format(aNumber);
-    }
-
-    function amountFor(aPerformance: Performance) {
-      let result = 0;
-      switch (playFor(aPerformance).type) {
-        case 'tragedy': // 비극
-          result = 40000;
-          if (aPerformance.audience > 30) {
-            result += 1000 * (aPerformance.audience - 30);
-          }
-          break;
-        case 'comedy': // 희극
-          result = 30000;
-          if (aPerformance.audience > 20) {
-            result += 10000 + 500 * (aPerformance.audience - 20);
-          }
-          result += 300 * aPerformance.audience;
-          break;
-        default:
-          throw new Error(`알 수 없는 장르 : ${playFor(aPerformance).type}`);
-      }
-      return result;
     }
 
     function totalAmount() {
