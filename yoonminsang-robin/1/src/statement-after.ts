@@ -22,7 +22,16 @@ import { Performance, Invoice, Plays } from './types';
 지역변수를 줄이기위해 함수를 사용하는데 이게 항상 옳은 방법일까?
 */
 
+// 1.6~1.10
+/*
+변경점
+
+*/
+
 export function statement(invoice: Invoice, plays: Plays) {
+  return renderPlainText(invoice, plays);
+}
+function renderPlainText(invoice: Invoice, plays: Plays) {
   let result = `청구내역 (고객명: ${invoice.customer})\n`;
   for (let perf of invoice.performances) {
     result += `${playFor(perf).name} : ${usd(amountFor(perf) / 100)} (${
