@@ -29,11 +29,12 @@ import { Performance, Invoice, Plays } from './types';
 */
 
 export function statement(invoice: Invoice, plays: Plays) {
-  const statementData = {};
+  const statementData: any = {};
+  statementData.customer = invoice.customer;
   return renderPlainText(statementData, invoice, plays);
 }
 function renderPlainText(data: any, invoice: Invoice, plays: Plays) {
-  let result = `청구내역 (고객명: ${invoice.customer})\n`;
+  let result = `청구내역 (고객명: ${data.customer})\n`;
   for (let perf of invoice.performances) {
     result += `${playFor(perf).name} : ${usd(amountFor(perf) / 100)} (${
       perf.audience
