@@ -1,5 +1,8 @@
 import { Invoice, Plays } from './types';
 
+/**
+ * @deprecated
+ */
 export function statement(invoice: Invoice, plays: Plays) {
   let totalAmount = 0;
   let volumeCredits = 0;
