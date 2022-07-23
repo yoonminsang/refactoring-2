@@ -31,9 +31,15 @@ import { Performance, Invoice, Plays } from './types';
 export function statement(invoice: Invoice, plays: Plays) {
   const statementData: any = {};
   statementData.customer = invoice.customer;
-  statementData.performances = invoice.performances;
+  statementData.performances = invoice.performances.map(enrichPerformance);
   return renderPlainText(statementData, plays);
 }
+
+function enrichPerformance(aPerformance: Performance) {
+  const result = Object.assign({}, aPerformance);
+  return result;
+}
+
 function renderPlainText(data: any, plays: Plays) {
   let result = `청구내역 (고객명: ${data.customer})\n`;
   for (let perf of data.performances) {
