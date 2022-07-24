@@ -15,7 +15,7 @@ import {
 3. 함수 옮기기를 통해 함수를 클래스로 이전(amount, volumeCredits)
 공연료 계산기를 다형성 버전으로 만들기
 4. 생성자를 팩터리 함수로 바꾸기
-5. 조건부 로직을 다형성으로 바꾸기(amount)
+5. 조건부 로직을 다형성으로 바꾸기(amount, volumeCredits)
 */
 
 class PerformanceCalculator {
@@ -32,12 +32,7 @@ class PerformanceCalculator {
   }
 
   get volumeCredits() {
-    let result = 0;
-    result += Math.max(this.performance.audience - 30, 0);
-    if ('comedy' === this.play.type) {
-      result += Math.floor(this.performance.audience / 5);
-    }
-    return result;
+    return Math.max(this.performance.audience - 30, 0);
   }
 }
 
@@ -58,6 +53,10 @@ class ComedyCalculator extends PerformanceCalculator {
     }
     result += 300 * this.performance.audience;
     return result;
+  }
+
+  get volumeCredits() {
+    return super.volumeCredits + Math.floor(this.performance.audience / 5);
   }
 }
 
