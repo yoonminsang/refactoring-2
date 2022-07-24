@@ -6,24 +6,25 @@ import {
   StatementData,
 } from './types';
 
-export default function createStatementData(invoice: Invoice, plays: Plays) {
+export default function createStatementData(
+  invoice: Invoice,
+  plays: Plays
+): StatementData {
   const enrichPerformances = invoice.performances.map(enrichPerformance);
-  const result: StatementData = {
+  return {
     customer: invoice.customer,
     performances: enrichPerformances,
     totalAmount: totalAmount(enrichPerformances),
     totalVolumeCredits: totalVolumeCredits(enrichPerformances),
   };
-  return result;
 
-  function enrichPerformance(aPerformance: Performance) {
-    const result: EnrichPerformance = {
+  function enrichPerformance(aPerformance: Performance): EnrichPerformance {
+    return {
       ...aPerformance,
       play: playFor(aPerformance),
       amount: amountFor(aPerformance),
       volumeCredits: volumeCreditsFor(aPerformance),
     };
-    return result;
   }
 
   function playFor(aPerformance: Performance) {
