@@ -7,12 +7,12 @@ import {
 } from './types';
 
 export default function createStatementData(invoice: Invoice, plays: Plays) {
-  const performances = invoice.performances.map(enrichPerformance);
+  const enrichPerformances = invoice.performances.map(enrichPerformance);
   const result: StatementData = {
     customer: invoice.customer,
-    performances,
-    totalAmount: totalAmount(performances),
-    totalVolumeCredits: totalVolumeCredits(performances),
+    performances: enrichPerformances,
+    totalAmount: totalAmount(enrichPerformances),
+    totalVolumeCredits: totalVolumeCredits(enrichPerformances),
   };
   return result;
 
@@ -61,11 +61,11 @@ export default function createStatementData(invoice: Invoice, plays: Plays) {
     return result;
   }
 
-  function totalAmount(performances: EnrichPerformance[]) {
-    return performances.reduce((acc, cur) => acc + cur.amount, 0);
+  function totalAmount(enrichPerformances: EnrichPerformance[]) {
+    return enrichPerformances.reduce((acc, cur) => acc + cur.amount, 0);
   }
 
-  function totalVolumeCredits(performances: EnrichPerformance[]) {
-    return performances.reduce((acc, cur) => acc + cur.volumeCredits, 0);
+  function totalVolumeCredits(enrichPerformances: EnrichPerformance[]) {
+    return enrichPerformances.reduce((acc, cur) => acc + cur.volumeCredits, 0);
   }
 }
