@@ -59,18 +59,13 @@ export default function createStatementData(
     return {
       ...aPerformance,
       play: calculator.play,
-      amount: amountFor(aPerformance),
+      amount: calculator.amount,
       volumeCredits: volumeCreditsFor(aPerformance),
     };
   }
 
   function playFor(aPerformance: Performance) {
     return plays[aPerformance.playID];
-  }
-
-  function amountFor(aPerformance: Performance) {
-    return new PerformanceCalculator(aPerformance, playFor(aPerformance))
-      .amount;
   }
 
   function volumeCreditsFor(aPerformance: Performance) {
