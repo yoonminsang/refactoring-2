@@ -18,7 +18,33 @@ import {
 5. 조건부 로직을 다형성으로 바꾸기(amount, volumeCredits)
 */
 
-class PerformanceCalculator {
+/*
+의문점
+amount에 abstract을 적용하려고 했는데 getter라서 할 수가 없다.
+즉 지금의 경우에는 템플릿 메소드 패턴을 언어적으로 지원하지 않는다.
+아래와 같은 방법으로 템플릿 메소드 패턴을 직접 구현해야할까?
+```
+  const ERR = (v) => {
+    throw v;
+  };
+  const OVERRIDE = (parent, method) => (typeof parent.prototype[method] === 'function' ? method : ERR());
+  const TMPL = (self, method, ...arg) => ('_' + method in self ? self['_' + method](...arg) : ERR());
+
+  const Subdata = class {
+    clear() {
+      TMPL(this, 'clear')();
+    }
+  };
+  const Stage = class extends SubData {
+    [HOOK(Subdata, 'clear')]() {
+      this.stage = 0;
+      this.isNext();
+    }
+  };
+```
+*/
+
+abstract class PerformanceCalculator {
   performance: Performance;
   play: Play;
 
