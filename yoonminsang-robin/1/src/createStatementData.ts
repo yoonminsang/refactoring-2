@@ -7,6 +7,16 @@ import {
   Play,
 } from './types';
 
+/*
+변경점
+핵심 : 조건부 로직을 다형서으로 바꾸기
+1. 공연료 계산기 만들기(PerformanceCalculator 클래스)
+2. 클래스의 생성자에 함수 선언 바꾸기 적용(aPlay)
+3. 함수 옮기기를 통해 함수를 클래스로 이전(amount, volumeCredits)
+공연료 계산기를 다형성 버전으로 만들기
+4. 생성자를 팩터리 함수로 바꾸기
+*/
+
 class PerformanceCalculator {
   performance: Performance;
   play: Play;
@@ -48,6 +58,10 @@ class PerformanceCalculator {
   }
 }
 
+function createPerformanceCalculator(aPerformance: Performance, aPlay: Play) {
+  return new PerformanceCalculator(aPerformance, aPlay);
+}
+
 export default function createStatementData(
   invoice: Invoice,
   plays: Plays
@@ -61,7 +75,7 @@ export default function createStatementData(
   };
 
   function enrichPerformance(aPerformance: Performance): EnrichPerformance {
-    const calculator = new PerformanceCalculator(
+    const calculator = createPerformanceCalculator(
       aPerformance,
       playFor(aPerformance) // 함수선언바꾸기
     );
