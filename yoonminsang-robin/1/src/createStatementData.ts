@@ -37,6 +37,15 @@ class PerformanceCalculator {
     }
     return result;
   }
+
+  get volumeCredits() {
+    let result = 0;
+    result += Math.max(this.performance.audience - 30, 0);
+    if ('comedy' === this.play.type) {
+      result += Math.floor(this.performance.audience / 5);
+    }
+    return result;
+  }
 }
 
 export default function createStatementData(
@@ -60,21 +69,12 @@ export default function createStatementData(
       ...aPerformance,
       play: calculator.play,
       amount: calculator.amount,
-      volumeCredits: volumeCreditsFor(aPerformance),
+      volumeCredits: calculator.volumeCredits,
     };
   }
 
   function playFor(aPerformance: Performance) {
     return plays[aPerformance.playID];
-  }
-
-  function volumeCreditsFor(aPerformance: Performance) {
-    let result = 0;
-    result += Math.max(aPerformance.audience - 30, 0);
-    if ('comedy' === playFor(aPerformance).type) {
-      result += Math.floor(aPerformance.audience / 5);
-    }
-    return result;
   }
 
   function totalAmount(enrichPerformances: EnrichPerformance[]) {
