@@ -27,17 +27,8 @@ class PerformanceCalculator {
     this.play = aPlay;
   }
 
-  get amount() {
-    let result = 0;
-    switch (this.play.type) {
-      case 'tragedy': // 비극
-        throw '오류 발생';
-      case 'comedy': // 희극
-        throw '오류 발생';
-      default:
-        throw new Error(`알 수 없는 장르 : ${this.play.type}`);
-    }
-    return result;
+  get amount(): number {
+    throw new Error('서브클래스에서 처리하도록 설계되었습니다.');
   }
 
   get volumeCredits() {
