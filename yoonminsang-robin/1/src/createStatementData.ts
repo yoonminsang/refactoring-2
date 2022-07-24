@@ -4,7 +4,18 @@ import {
   Plays,
   EnrichPerformance,
   StatementData,
+  Play,
 } from './types';
+
+class PerformanceCalculator {
+  performance: Performance;
+  play: Play;
+
+  constructor(aPerformance: Performance, aPlay: Play) {
+    this.performance = aPerformance;
+    this.play = aPlay;
+  }
+}
 
 export default function createStatementData(
   invoice: Invoice,
@@ -19,9 +30,13 @@ export default function createStatementData(
   };
 
   function enrichPerformance(aPerformance: Performance): EnrichPerformance {
+    const calculator = new PerformanceCalculator(
+      aPerformance,
+      playFor(aPerformance) // 함수선언바꾸기
+    );
     return {
       ...aPerformance,
-      play: playFor(aPerformance),
+      play: calculator.play,
       amount: amountFor(aPerformance),
       volumeCredits: volumeCreditsFor(aPerformance),
     };
