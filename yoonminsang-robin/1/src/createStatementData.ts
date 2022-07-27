@@ -29,7 +29,7 @@ amount에 abstract을 적용하려고 했는데 getter라서 할 수가 없다.
   };
   const OVERRIDE = (parent, method) => (typeof parent.prototype[method] === 'function' ? method : ERR());
   const TMPL = (self, method, ...arg) => ('_' + method in self ? self['_' + method](...arg) : ERR());
-
+  
   const Subdata = class {
     clear() {
       TMPL(this, 'clear')();
@@ -41,8 +41,9 @@ amount에 abstract을 적용하려고 했는데 getter라서 할 수가 없다.
       this.isNext();
     }
   };
-```
-*/
+  ```
+  */
+// structuredClone;
 
 abstract class PerformanceCalculator {
   performance: Performance;
@@ -53,9 +54,7 @@ abstract class PerformanceCalculator {
     this.play = aPlay;
   }
 
-  get amount(): number {
-    throw new Error('서브클래스에서 처리하도록 설계되었습니다.');
-  }
+  abstract get amount(): number;
 
   get volumeCredits() {
     return Math.max(this.performance.audience - 30, 0);
