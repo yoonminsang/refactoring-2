@@ -57,6 +57,9 @@ function getAddVolumeCredits(audience: number, type: Genre) {
   return addVolumeCredits;
 }
 
+/**
+ * @deprecated
+ */
 export function statement(invoice: Invoice, plays: Plays) {
   let totalAmount = 0;
   let volumeCredits = 0;

@@ -19,3 +19,15 @@ export interface Invoice {
   customer: string;
   performances: Performance[];
 }
+
+export interface EnrichPerformance extends Performance {
+  play: Play;
+  amount: number;
+  volumeCredits: number;
+}
+
+export type StatementData = {
+  performances: EnrichPerformance[];
+  totalAmount: number;
+  totalVolumeCredits: number;
+} & Pick<Invoice, 'customer'>;

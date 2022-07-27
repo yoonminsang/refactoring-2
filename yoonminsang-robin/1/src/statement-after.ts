@@ -1,4 +1,10 @@
-import { Performance, Invoice, Plays } from './types';
+import {
+  Performance,
+  Invoice,
+  Plays,
+  EnrichPerformance,
+  StatementData,
+} from './types';
 
 // 1.1~1.5
 /*
@@ -16,29 +22,53 @@ import { Performance, Invoice, Plays } from './types';
 
 /*
 의문점
-타입스크립트에서도 부정관사를 붙여야할까?
-지역변수를 제거하기 위해서 
-중첩함수가 좋은 방법일까?
-지역변수를 줄이기위해 함수를 사용하는데 이게 항상 옳은 방법일까?
+- 타입스크립트에서도 부정관사를 붙여야할까?
+- 중첩함수가 좋은 방법일까?
+- 지역변수를 줄이기위해 함수를 사용하는데 이게 항상 옳은 방법일까?
+- 함수에 객체 전체를 전달하는게 좋을까 필요한 데이터만 전달하는게 좋을까?
 */
 
-export function statement(invoice: Invoice, plays: Plays) {
-  let result = `청구내역 (고객명: ${invoice.customer})\n`;
-  for (let perf of invoice.performances) {
-    result += `${playFor(perf).name} : ${usd(amountFor(perf) / 100)} (${
-      perf.audience
-    }석)\n`;
-  }
-  result += `총액: ${usd(totalAmount() / 100)}\n`;
-  result += `적립 포인트: ${totalVolumeCredits()}점\n`;
-  return result;
+// 1.6
+/*
+변경점
+data, ui 분리. + 중간 구조체 생성
+*/
 
-  function usd(aNumber: number) {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-    }).format(aNumber);
+/*
+의문점
+- 타입스크립트에서는 객체에 유동적으로 값을 넣을 수 없다. 
+  그래서 책에서처럼 객체의 값을 수정하면서 객체를 함수에 전달할 수 없다. 
+  nullish로 타입을 재정의하고 함수에 전달할 수 있지만 이때 타입이 일정하지 않다. 
+  ex) a함수에서는 id가 없고 b함수에서는 id 존재 그래서 객체전체를 함수에 전달하지 않고 필요한 데이터만 뽑아서 전달했다.
+
+- 여기서 생기는 문제점 2가지
+  1. 필요한 데이터만 뽑아서 전달하기 힘든경우도 있다.
+    - 필요한 데이터가 바뀐다면 유지보수 어려움
+  2. 필요한 데이터가 단순한 값이 아니라면(함수로 생성, 객체의 key로 접근, 등등) 지역변수 혹은 함수를 이용해 접근해야 함.
+    - 지역변수로 접근하면 지역변수를 생성한다는 문제가 있고 함수를 이용해 접근한다면 가독성이나 유지보수 측면에서 단점이 있다.
+*/
+
+/**
+ * @deprecated
+ */
+export function statement(invoice: Invoice, plays: Plays) {
+  const performances = invoice.performances.map(enrichPerformance);
+  const statementData: StatementData = {
+    customer: invoice.customer,
+    performances,
+    totalAmount: totalAmount(performances),
+    totalVolumeCredits: totalVolumeCredits(performances),
+  };
+  return renderPlainText(statementData);
+
+  function enrichPerformance(aPerformance: Performance) {
+    const result: EnrichPerformance = {
+      ...aPerformance,
+      play: playFor(aPerformance),
+      amount: amountFor(aPerformance),
+      volumeCredits: volumeCreditsFor(aPerformance),
+    };
+    return result;
   }
 
   function playFor(aPerformance: Performance) {
@@ -67,14 +97,6 @@ export function statement(invoice: Invoice, plays: Plays) {
     return result;
   }
 
-  function totalAmount() {
-    let result = 0;
-    for (let perf of invoice.performances) {
-      result += amountFor(perf);
-    }
-    return result;
-  }
-
   function volumeCreditsFor(aPerformance: Performance) {
     let result = 0;
     result += Math.max(aPerformance.audience - 30, 0);
@@ -84,11 +106,29 @@ export function statement(invoice: Invoice, plays: Plays) {
     return result;
   }
 
-  function totalVolumeCredits() {
-    let result = 0;
-    for (let perf of invoice.performances) {
-      result += volumeCreditsFor(perf);
-    }
-    return result;
+  function totalAmount(performances: EnrichPerformance[]) {
+    return performances.reduce((acc, cur) => acc + cur.amount, 0);
   }
+
+  function totalVolumeCredits(performances: EnrichPerformance[]) {
+    return performances.reduce((acc, cur) => acc + cur.volumeCredits, 0);
+  }
+}
+
+function renderPlainText(data: StatementData) {
+  let result = `청구내역 (고객명: ${data.customer})\n`;
+  for (let perf of data.performances) {
+    result += `${perf.play.name} : ${usd(perf.amount)} (${perf.audience}석)\n`;
+  }
+  result += `총액: ${usd(data.totalAmount)}\n`;
+  result += `적립 포인트: ${data.totalVolumeCredits}점\n`;
+  return result;
+}
+
+function usd(aNumber: number) {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format(aNumber / 100);
 }
