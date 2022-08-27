@@ -1,15 +1,34 @@
-class Province {
-  constructor(doc) {
-    this._name = doc.name;
+interface IProducer {
+  name: string;
+  cost: number;
+  production: number;
+}
+interface IConvinceData {
+  name: string;
+  producers: IProducer[];
+  demand: number;
+  price: number;
+}
+
+export class Province {
+  private _name: string;
+  private _producers: Producer[];
+  private _totalProduction: number;
+  private _demand: number;
+  private _price: number;
+  constructor(convinceData: IConvinceData) {
+    this._name = convinceData.name;
     this._producers = [];
     this._totalProduction = 0;
-    this._demand = doc.demand;
-    this._price = doc.price;
-    doc.producers.forEach((d) => this.addProducer(new Producer(this, d)));
+    this._demand = convinceData.demand;
+    this._price = convinceData.price;
+    convinceData.producers.forEach((producer) =>
+      this.addProducer(new Producer(this, producer))
+    );
   }
-  addProducer(arg) {
+  addProducer(arg: Producer) {
     this._producers.push(arg);
-    this._totalProduction += arg.prodution;
+    this._totalProduction += arg.production;
   }
   get name() {
     return this._name;
@@ -20,20 +39,20 @@ class Province {
   get totalProduction() {
     return this._totalProduction;
   }
-  set totalProduction(arg) {
+  set totalProduction(arg: number) {
     this._totalProduction = arg;
   }
   get demand() {
     return this._demand;
   }
-  set demand(arg) {
-    this._demand = parseInt(arg); // 숫자로 파싱해서 저장
+  set demand(arg: number) {
+    this._demand = arg;
   }
   get price() {
     return this._price;
   }
-  set price(arg) {
-    this._price = parseInt(arg); // 숫자로 파싱해서 저장
+  set price(arg: number) {
+    this._price = arg;
   }
   get shortfall() {
     return this._demand - this.totalProduction;
@@ -52,16 +71,16 @@ class Province {
     let result = 0;
     this.producers
       .sort((a, b) => a.cost - b.cost)
-      .forEach((p) => {
-        const contribution = Math.min(remainingDemand, p.production);
+      .forEach((producer) => {
+        const contribution = Math.min(remainingDemand, producer.production);
         remainingDemand -= contribution;
-        result += contribution * p.cost;
+        result += contribution * producer.cost;
       });
     return result;
   }
 }
 
-function sampleProvinceData() {
+export function sampleProvinceData(): IConvinceData {
   return {
     name: 'Asia',
     producers: [
@@ -74,12 +93,16 @@ function sampleProvinceData() {
   };
 }
 
-class Producer {
-  constructor(aProvince, data) {
-    this._province = aProvince;
-    this._cost = data.cost;
-    this._name = data.name;
-    this._production = data.prodction || 0;
+export class Producer {
+  private _province: Province;
+  private _cost: number;
+  private _name: string;
+  private _production: any;
+  constructor(province: Province, producer: IProducer) {
+    this._province = province;
+    this._cost = producer.cost;
+    this._name = producer.name;
+    this._production = producer.production || 0;
   }
   get name() {
     return this._name;
@@ -87,14 +110,14 @@ class Producer {
   get cost() {
     return this._cost;
   }
-  set cost(arg) {
-    this._cost = parseInt(arg);
+  set cost(arg: number) {
+    this._cost = arg;
   }
 
-  get prodction() {
+  get production() {
     return this._production;
   }
-  set prodction(amountStr) {
+  set production(amountStr) {
     const amount = parseInt(amountStr);
     const newProduction = Number.isNaN(amount) ? 0 : amount;
     this._province.totalProduction += newProduction - this._production;
