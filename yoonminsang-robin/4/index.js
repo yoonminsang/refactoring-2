@@ -49,3 +49,31 @@ function sampleProvinceData() {
     price: 20,
   };
 }
+
+class Producer {
+  constructor(aProvince, data) {
+    this._province = aProvince;
+    this._cost = data.cost;
+    this._name = data.name;
+    this._production = data.prodction || 0;
+  }
+  get name() {
+    return this._name;
+  }
+  get cost() {
+    return this._cost;
+  }
+  set cost(arg) {
+    this._cost = parseInt(arg);
+  }
+
+  get prodction() {
+    return this._production;
+  }
+  set prodction(amountStr) {
+    const amount = parseInt(amountStr);
+    const newProduction = Number.isNaN(amount) ? 0 : amount;
+    this._province.totalProduction += newProduction - this._production;
+    this._production = newProduction;
+  }
+}
