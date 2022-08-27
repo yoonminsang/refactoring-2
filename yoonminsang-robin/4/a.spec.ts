@@ -2,7 +2,11 @@ import { Province, sampleProvinceData } from '.';
 
 describe('province', () => {
   it('shorfall', () => {
-    const asai = new Province(sampleProvinceData()); // 픽스처 설정
-    expect(asai.shortfall).toBe(5);
+    const asia = new Province(sampleProvinceData()); // 픽스처 설정
+    expect(asia.shortfall).toBe(5);
+  });
+  it('profit', () => {
+    const asia = new Province(sampleProvinceData());
+    expect(asia.profit).toBe(230);
   });
 });
