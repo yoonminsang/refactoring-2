@@ -6,3 +6,4 @@
 - [황선주](https://github.com/SunjooHwang)
 - [이진영](https://github.com/wlsdud2194)
 - [윤민상](https://github.com/yoonminsang)
+- [윤병인](https://github.com/airman5573)
